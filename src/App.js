@@ -1,28 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Selector from './components/Selector';
+import { useFetchWineData } from './useFetchWineData';
 
 function App() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { data, loading, error } = useFetchWineData('http://localhost:5000/unique-wines');
   const [selections, setSelections] = useState({ A: {}, B: {} });
-
-  useEffect(() => {
-    fetch('http://localhost:5000/unique-wines')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((responseData) => {
-        setData(responseData);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      });
-  }, []);
 
   const handleSelectionChange = (id, key, value) => {
     setSelections((prevSelections) => ({
@@ -43,8 +25,8 @@ function App() {
     return <div>Loading...</div>;
   }
 
-  if (!data) {
-    return <div>Error loading data.</div>;
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
   return (
@@ -52,7 +34,7 @@ function App() {
       <h1>Wine Selection</h1>
       <h2>Selector A</h2>
       <Selector id="A" data={data} onSelectionChange={handleSelectionChange} />
-      <h2>Selector B</h2>
+      <h2>hello</h2>
       <Selector id="B" data={data} onSelectionChange={handleSelectionChange} />
       <button
         style={{
