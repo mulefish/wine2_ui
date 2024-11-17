@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { setResponse, setStatus } from './store/wineSlice';
 import Selector from './components/Selector';
 import WineList from './components/WineList';
@@ -12,6 +12,7 @@ function App() {
   const [numberSelection, setNumberSelection] = useState(10); // Default to 10
   const [resetTrigger, setResetTrigger] = useState(false); // Trigger for resetting dropdowns
   const dispatch = useDispatch();
+  const store = useStore(); // Access the Redux store directly
 
   const handleSelectionChange = (id, key, value) => {
     setSelections((prevSelections) => ({
@@ -30,7 +31,7 @@ function App() {
       number: numberSelection,
     };
 
-    console.log('Payload: +++++++++\n' + JSON.stringify(payload, null, 2) + '\n = ==========');
+    console.log('Payload:\n' + JSON.stringify(payload, null, 2));
 
     dispatch(setStatus('loading'));
     try {
@@ -64,6 +65,10 @@ function App() {
     setNumberSelection(10);
     setResetTrigger((prev) => !prev); // Toggle reset trigger
     dispatch(setResponse(null)); // Clear the WineList
+  };
+
+  const logReduxStore = () => {
+    console.log("Redux Store State:", store.getState());
   };
 
   if (loading) {
@@ -106,30 +111,40 @@ function App() {
           </div>
 
           <button
-        style={{
-          marginTop: '20px',
-          marginRight: '10px',
-          padding: '10px 20px',
-          fontSize: '16px',
-          cursor: 'pointer',
-        }}
-        onClick={handleButtonClick}
-      >
-        Get Wines
-      </button>
-      <button
-        style={{
-          marginTop: '20px',
-          padding: '10px 20px',
-          fontSize: '16px',
-          cursor: 'pointer',
-        }}
-        onClick={handleClearButtonClick}
-      >
-        Clear
-      </button>
+            style={{
+              marginTop: '20px',
+              marginRight: '10px',
+              padding: '10px 20px',
+              fontSize: '16px',
+              cursor: 'pointer',
+            }}
+            onClick={handleButtonClick}
+          >
+            Get Wines
+          </button>
+          <button
+            style={{
+              marginTop: '20px',
+              padding: '10px 20px',
+              fontSize: '16px',
+              cursor: 'pointer',
+            }}
+            onClick={handleClearButtonClick}
+          >
+            Clear
+          </button>
 
-
+          <button
+            style={{
+              marginTop: '20px',
+              padding: '10px 20px',
+              fontSize: '16px',
+              cursor: 'pointer',
+            }}
+            onClick={logReduxStore}
+          >
+            Log Redux Store
+          </button>
         </div>
 
         {/* Wine Visualization */}
@@ -138,9 +153,6 @@ function App() {
         </div>
       </div>
 
-
-      <div>
-      </div>
       <WineList />
     </div>
   );
