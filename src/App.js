@@ -77,16 +77,9 @@ function App() {
   return (
     // <div style={{ textAlign: 'center', marginTop: '20px' }}>
     <div>
-      <h1>Wine Selection : Make sure https://github.com/mulefish/wine2 is running</h1>
-      {/* <Selector
-        id="A"
-        data={data}
-        onSelectionChange={handleSelectionChange}
-        resetTrigger={resetTrigger} // Pass reset trigger to Selector
-      /> */}
+      <h4>Wine Selection : Make sure https://github.com/mulefish/wine2 is running : <a href="https://github.com/mulefish/wine2_ui">wine2_ui repo</a></h4>
 
-
-<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         {/* Selector Widget */}
         <div style={{ flex: '1', marginRight: '20px' }}>
           <Selector
@@ -95,23 +88,23 @@ function App() {
             onSelectionChange={handleSelectionChange}
             resetTrigger={resetTrigger}
           />
-                <div style={{ marginTop: '20px' }}>
-        <label htmlFor="number-select" style={{ marginRight: '10px', fontWeight: 'bold' }}>
-          Select a Number:
-        </label>
-        <select
-          id="number-select"
-          value={numberSelection}
-          onChange={handleNumberChange}
-          style={{ padding: '10px', fontSize: '16px' }}
-        >
-          <option value={1}>1</option>
-          <option value={3}>3</option>
-          <option value={10}>10</option>
-          <option value={20}>20</option>
-          <option value={100}>100</option>
-        </select>
-      </div>
+          <div style={{ marginTop: '20px' }}>
+            <label htmlFor="number-select" style={{ marginRight: '10px', fontWeight: 'bold' }}>
+              Select a Number:
+            </label>
+            <select
+              id="number-select"
+              value={numberSelection}
+              onChange={handleNumberChange}
+              style={{ padding: '10px', fontSize: '16px' }}
+            >
+              <option value={1}>1</option>
+              <option value={3}>3</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={100}>100</option>
+            </select>
+          </div>
 
         </div>
 
@@ -146,7 +139,7 @@ function App() {
         Clear
       </button>
       <div>
-</div>
+      </div>
       <WineList />
     </div>
   );

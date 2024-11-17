@@ -38,6 +38,20 @@ const WineViz = () => {
     const adjustedMax = maxScore + 0.1 * scoreRange;
     const adjustedRange = adjustedMax - adjustedMin;
 
+    // Calculate Y values for highest and lowest scores
+    const highestY =
+      canvasHeight -
+      padding -
+      ((maxScore - adjustedMin) / adjustedRange) * (canvasHeight - 2 * padding);
+    const lowestY =
+      canvasHeight -
+      padding -
+      ((minScore - adjustedMin) / adjustedRange) * (canvasHeight - 2 * padding);
+
+    // Log the highest and lowest scores and their Y positions
+    console.log('Highest Similarity:', maxScore, 'Y Position:', highestY);
+    console.log('Lowest Similarity:', minScore, 'Y Position:', lowestY);
+
     // Draw X and Y axes
     ctx.beginPath();
     ctx.moveTo(padding, padding); // Y-axis
@@ -50,12 +64,13 @@ const WineViz = () => {
     // Axis labels
     ctx.font = '14px Arial';
     ctx.fillStyle = '#000';
-    ctx.fillText('Similarity Score', canvasWidth / 2 - 60, canvasHeight - 20);
-    ctx.save();
-    ctx.translate(20, canvasHeight / 2 + 30);
-    ctx.rotate(-Math.PI / 2);
-    ctx.fillText('Higher Score = Higher Position', 0, 0);
-    ctx.restore();
+    ctx.fillText('X axis means nothing', canvasWidth / 2 - 60, canvasHeight - 20);
+
+    // Draw markers for highest and lowest scores on the Y-axis
+    ctx.fillStyle = 'green';
+    ctx.fillText(`Highest: ${maxScore.toFixed(2)}`, padding - 45, highestY + 5); // Marker for highest
+    ctx.fillStyle = 'red';
+    ctx.fillText(`Lowest: ${minScore.toFixed(2)}`, padding - 45, lowestY + 5); // Marker for lowest
 
     // Plot each wine on the canvas
     response.data.forEach((wine) => {
@@ -77,11 +92,11 @@ const WineViz = () => {
       // Label the wine
       ctx.font = '12px Arial';
       ctx.fillStyle = '#333';
-      ctx.fillText(wine_name, x + 10, y + 5); // Label beside the circle
+      ctx.fillText(wine_name + " " + similarity.toFixed(2), x + 10, y + 5); // Label beside the circle
     });
   }, [response]);
 
-  return <canvas ref={canvasRef} width={600} height={400} style={{ border: '1px solid #ccc' }}></canvas>;
+  return <canvas ref={canvasRef} width={800} height={600} style={{ border: '1px solid #ccc' }}></canvas>;
 };
 
 export default WineViz;
