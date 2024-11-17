@@ -18,15 +18,48 @@ function App() {
     setNumberSelection(Number(e.target.value));
   };
 
-  const handleButtonClick = () => {
+  // const handleButtonClick = () => {
+  //   const payload = {
+  //     selections,
+  //     number: numberSelection, // Include the selected number
+  //   };
+
+  //   console.log('Payload: +++++++++\n' + JSON.stringify( payload, null, 2 ) + "\n = ==========");
+  //   // Use the payload in your API call or other logic
+  //   // "http://127.0.0.1:5000/get_closest_wines"
+  // };
+
+
+  const handleButtonClick = async () => {
     const payload = {
       selections,
       number: numberSelection, // Include the selected number
     };
-
-    console.log('Payload: +++++++++\n' + JSON.stringify( payload, null, 2 ) + "\n = ==========");
-    // Use the payload in your API call or other logic
+  
+    console.log('Payload: +++++++++\n' + JSON.stringify(payload, null, 2) + '\n = ==========');
+  
+    try {
+      const response = await fetch('http://127.0.0.1:5000/get_closest_wines', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) {
+        console.error(`Error: ${response.status} - ${response.statusText}`);
+        return;
+      }
+  
+      const responseData = await response.json();
+      console.log('Response from server:\n' + JSON.stringify(responseData, null, 2));
+    } catch (error) {
+      console.error('Error making POST request:', error);
+    }
   };
+  
+
 
   if (loading) {
     return <div>Loading...</div>;
