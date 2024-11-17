@@ -13,9 +13,15 @@ const wineSlice = createSlice({
     setStatus(state, action) {
       state.status = action.payload;
     },
+    addWine(state, action) {
+      if (!Array.isArray(state.response.data)) {
+        state.response.data = []; // Ensure `data` is an array
+      }
+      state.response.data.push(action.payload); // Add the wine to `data`
+    },
   },
 });
 
-export const { setResponse, setStatus } = wineSlice.actions;
+export const { setResponse, setStatus, addWine } = wineSlice.actions;
 
 export default wineSlice.reducer;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector, useStore } from 'react-redux';
-import { setResponse, setStatus } from './store/wineSlice';
+import { addWine, setResponse, setStatus } from './store/wineSlice';
 import Selector from './components/Selector';
 import WineList from './components/WineList';
 import { useFetchWineData } from './useFetchWineData';
@@ -84,6 +84,7 @@ function App() {
     const x = store.getState();
     console.log("count count=" + x['wine']['response']['data'].length ) 
     console.log( testWine  )
+    dispatch(addWine(testWine));
   }
 
 
