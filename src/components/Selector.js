@@ -1,7 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-function Selector({ id, data, onSelectionChange }) {
+function Selector({ id, data = {}, onSelectionChange, resetTrigger }) {
+  const [selectedOptions, setSelectedOptions] = useState({});
+
+  useEffect(() => {
+    // Reset the dropdowns when resetTrigger changes
+    setSelectedOptions({});
+  }, [resetTrigger]);
+
   const handleSelectChange = (key, value) => {
+    const newSelection = { ...selectedOptions, [key]: value };
+    setSelectedOptions(newSelection);
     onSelectionChange(id, key, value);
   };
 
@@ -17,8 +26,11 @@ function Selector({ id, data, onSelectionChange }) {
             name={key}
             style={{ padding: '10px', fontSize: '16px' }}
             onChange={(e) => handleSelectChange(key, e.target.value)}
+            value={selectedOptions[key] || ''} // Reset to default when options are cleared
           >
-            <option value="">-- Select an option --</option>
+            <option value="" disabled>
+              -- Select an Option --
+            </option>
             {data[key].map((option) => (
               <option key={option} value={option}>
                 {option}

@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setResponse, setStatus } from './store/wineSlice';
 import Selector from './components/Selector';
-import WineList from './components/WineList'; // Import WineList
+import WineList from './components/WineList';
 import { useFetchWineData } from './useFetchWineData';
 
 function App() {
   const { data, loading, error } = useFetchWineData('http://localhost:5000/unique-wines');
   const [selections, setSelections] = useState({});
   const [numberSelection, setNumberSelection] = useState(10); // Default to 10
+  const [resetTrigger, setResetTrigger] = useState(false); // Trigger for resetting dropdowns
   const dispatch = useDispatch();
 
   const handleSelectionChange = (id, key, value) => {
@@ -25,12 +26,12 @@ function App() {
   const handleButtonClick = async () => {
     const payload = {
       selections,
-      number: numberSelection, // Include the selected number
+      number: numberSelection,
     };
 
     console.log('Payload: +++++++++\n' + JSON.stringify(payload, null, 2) + '\n = ==========');
 
-    dispatch(setStatus('loading')); // Set status to loading
+    dispatch(setStatus('loading'));
     try {
       const response = await fetch('http://127.0.0.1:5000/get_closest_wines', {
         method: 'POST',
@@ -49,13 +50,19 @@ function App() {
       const responseData = await response.json();
       console.log('Response from server:\n' + JSON.stringify(responseData, null, 2));
 
-      // Dispatch the response to Redux
       dispatch(setResponse(responseData));
       dispatch(setStatus('succeeded'));
     } catch (error) {
       console.error('Error making POST request:', error);
       dispatch(setStatus('failed'));
     }
+  };
+
+  const handleClearButtonClick = () => {
+    setSelections({});
+    setNumberSelection(10);
+    setResetTrigger((prev) => !prev); // Toggle reset trigger
+    dispatch(setResponse(null)); // Clear the WineList
   };
 
   if (loading) {
@@ -67,9 +74,15 @@ function App() {
   }
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '20px' }}>
-      <h1>Wine Selection</h1>
-      <Selector id="A" data={data} onSelectionChange={handleSelectionChange} />
+    // <div style={{ textAlign: 'center', marginTop: '20px' }}>
+    <div>
+      <h1>Wine Selection : Make sure https://github.com/mulefish/wine2 is running</h1>
+      <Selector
+        id="A"
+        data={data}
+        onSelectionChange={handleSelectionChange}
+        resetTrigger={resetTrigger} // Pass reset trigger to Selector
+      />
       <div style={{ marginTop: '20px' }}>
         <label htmlFor="number-select" style={{ marginRight: '10px', fontWeight: 'bold' }}>
           Select a Number:
@@ -90,6 +103,7 @@ function App() {
       <button
         style={{
           marginTop: '20px',
+          marginRight: '10px',
           padding: '10px 20px',
           fontSize: '16px',
           cursor: 'pointer',
@@ -98,7 +112,18 @@ function App() {
       >
         Log Selections
       </button>
-      <WineList /> {/* Add WineList component here */}
+      <button
+        style={{
+          marginTop: '20px',
+          padding: '10px 20px',
+          fontSize: '16px',
+          cursor: 'pointer',
+        }}
+        onClick={handleClearButtonClick}
+      >
+        Clear
+      </button>
+      <WineList />
     </div>
   );
 }
