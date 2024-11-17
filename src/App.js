@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setResponse, setStatus } from './store/wineSlice';
 import Selector from './components/Selector';
+import WineList from './components/WineList'; // Import WineList
 import { useFetchWineData } from './useFetchWineData';
 
 function App() {
   const { data, loading, error } = useFetchWineData('http://localhost:5000/unique-wines');
   const [selections, setSelections] = useState({});
   const [numberSelection, setNumberSelection] = useState(10); // Default to 10
+  const dispatch = useDispatch();
 
   const handleSelectionChange = (id, key, value) => {
     setSelections((prevSelections) => ({
@@ -18,26 +22,15 @@ function App() {
     setNumberSelection(Number(e.target.value));
   };
 
-  // const handleButtonClick = () => {
-  //   const payload = {
-  //     selections,
-  //     number: numberSelection, // Include the selected number
-  //   };
-
-  //   console.log('Payload: +++++++++\n' + JSON.stringify( payload, null, 2 ) + "\n = ==========");
-  //   // Use the payload in your API call or other logic
-  //   // "http://127.0.0.1:5000/get_closest_wines"
-  // };
-
-
   const handleButtonClick = async () => {
     const payload = {
       selections,
       number: numberSelection, // Include the selected number
     };
-  
+
     console.log('Payload: +++++++++\n' + JSON.stringify(payload, null, 2) + '\n = ==========');
-  
+
+    dispatch(setStatus('loading')); // Set status to loading
     try {
       const response = await fetch('http://127.0.0.1:5000/get_closest_wines', {
         method: 'POST',
@@ -46,20 +39,24 @@ function App() {
         },
         body: JSON.stringify(payload),
       });
-  
+
       if (!response.ok) {
         console.error(`Error: ${response.status} - ${response.statusText}`);
+        dispatch(setStatus('failed'));
         return;
       }
-  
+
       const responseData = await response.json();
       console.log('Response from server:\n' + JSON.stringify(responseData, null, 2));
+
+      // Dispatch the response to Redux
+      dispatch(setResponse(responseData));
+      dispatch(setStatus('succeeded'));
     } catch (error) {
       console.error('Error making POST request:', error);
+      dispatch(setStatus('failed'));
     }
   };
-  
-
 
   if (loading) {
     return <div>Loading...</div>;
@@ -101,6 +98,7 @@ function App() {
       >
         Log Selections
       </button>
+      <WineList /> {/* Add WineList component here */}
     </div>
   );
 }
