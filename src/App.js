@@ -4,21 +4,28 @@ import { useFetchWineData } from './useFetchWineData';
 
 function App() {
   const { data, loading, error } = useFetchWineData('http://localhost:5000/unique-wines');
-  const [selections, setSelections] = useState({ A: {}, B: {} });
+  const [selections, setSelections] = useState({});
+  const [numberSelection, setNumberSelection] = useState(10); // Default to 10
 
   const handleSelectionChange = (id, key, value) => {
     setSelections((prevSelections) => ({
       ...prevSelections,
-      [id]: {
-        ...prevSelections[id],
-        [key]: value,
-      },
+      [key]: value,
     }));
   };
 
+  const handleNumberChange = (e) => {
+    setNumberSelection(Number(e.target.value));
+  };
+
   const handleButtonClick = () => {
-    console.log('Selections for A:', selections.A);
-    console.log('Selections for B:', selections.B);
+    const payload = {
+      selections,
+      number: numberSelection, // Include the selected number
+    };
+
+    console.log('Payload: +++++++++\n' + JSON.stringify( payload, null, 2 ) + "\n = ==========");
+    // Use the payload in your API call or other logic
   };
 
   if (loading) {
@@ -32,10 +39,24 @@ function App() {
   return (
     <div style={{ textAlign: 'center', marginTop: '20px' }}>
       <h1>Wine Selection</h1>
-      <h2>Selector A</h2>
       <Selector id="A" data={data} onSelectionChange={handleSelectionChange} />
-      <h2>hello</h2>
-      <Selector id="B" data={data} onSelectionChange={handleSelectionChange} />
+      <div style={{ marginTop: '20px' }}>
+        <label htmlFor="number-select" style={{ marginRight: '10px', fontWeight: 'bold' }}>
+          Select a Number:
+        </label>
+        <select
+          id="number-select"
+          value={numberSelection}
+          onChange={handleNumberChange}
+          style={{ padding: '10px', fontSize: '16px' }}
+        >
+          <option value={1}>1</option>
+          <option value={3}>3</option>
+          <option value={10}>10</option>
+          <option value={20}>20</option>
+          <option value={100}>100</option>
+        </select>
+      </div>
       <button
         style={{
           marginTop: '20px',
