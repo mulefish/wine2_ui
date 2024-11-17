@@ -4,6 +4,7 @@ import { setResponse, setStatus } from './store/wineSlice';
 import Selector from './components/Selector';
 import WineList from './components/WineList';
 import { useFetchWineData } from './useFetchWineData';
+import WineViz from './components/WineViz';
 
 function App() {
   const { data, loading, error } = useFetchWineData('http://localhost:5000/unique-wines');
@@ -77,13 +78,24 @@ function App() {
     // <div style={{ textAlign: 'center', marginTop: '20px' }}>
     <div>
       <h1>Wine Selection : Make sure https://github.com/mulefish/wine2 is running</h1>
-      <Selector
+      {/* <Selector
         id="A"
         data={data}
         onSelectionChange={handleSelectionChange}
         resetTrigger={resetTrigger} // Pass reset trigger to Selector
-      />
-      <div style={{ marginTop: '20px' }}>
+      /> */}
+
+
+<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        {/* Selector Widget */}
+        <div style={{ flex: '1', marginRight: '20px' }}>
+          <Selector
+            id="A"
+            data={data}
+            onSelectionChange={handleSelectionChange}
+            resetTrigger={resetTrigger}
+          />
+                <div style={{ marginTop: '20px' }}>
         <label htmlFor="number-select" style={{ marginRight: '10px', fontWeight: 'bold' }}>
           Select a Number:
         </label>
@@ -100,6 +112,16 @@ function App() {
           <option value={100}>100</option>
         </select>
       </div>
+
+        </div>
+
+        {/* Wine Visualization */}
+        <div style={{ flex: '2' }}>
+          <WineViz />
+        </div>
+      </div>
+
+
       <button
         style={{
           marginTop: '20px',
@@ -123,6 +145,8 @@ function App() {
       >
         Clear
       </button>
+      <div>
+</div>
       <WineList />
     </div>
   );
