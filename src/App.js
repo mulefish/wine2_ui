@@ -75,7 +75,6 @@ function App() {
   }
 
   return (
-    // <div style={{ textAlign: 'center', marginTop: '20px' }}>
     <div>
       <h4>Wine Selection : Make sure https://github.com/mulefish/wine2 is running : <a href="https://github.com/mulefish/wine2_ui">wine2_ui repo</a></h4>
 
@@ -106,16 +105,7 @@ function App() {
             </select>
           </div>
 
-        </div>
-
-        {/* Wine Visualization */}
-        <div style={{ flex: '2' }}>
-          <WineViz />
-        </div>
-      </div>
-
-
-      <button
+          <button
         style={{
           marginTop: '20px',
           marginRight: '10px',
@@ -125,7 +115,7 @@ function App() {
         }}
         onClick={handleButtonClick}
       >
-        Log Selections
+        Get Wines
       </button>
       <button
         style={{
@@ -138,6 +128,17 @@ function App() {
       >
         Clear
       </button>
+
+
+        </div>
+
+        {/* Wine Visualization */}
+        <div style={{ flex: '2' }}>
+          <WineViz />
+        </div>
+      </div>
+
+
       <div>
       </div>
       <WineList />

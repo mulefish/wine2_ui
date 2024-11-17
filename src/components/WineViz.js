@@ -1,102 +1,96 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 
 const WineViz = () => {
   const response = useSelector((state) => state.wine.response); // Access wine data from Redux
-  const canvasRef = useRef(null);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+  if (!response || response.status !== 'success' || !response.data.length) {
+    return <div>No wine data to visualize</div>;
+  }
 
-    // Clear the canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // SVG dimensions
+  const svgWidth = 800;
+  const svgHeight = 600;
 
-    if (!response || response.status !== 'success' || !response.data.length) {
-      // Display a message on the canvas if no data
-      ctx.font = '20px Arial';
-      ctx.fillStyle = '#888';
-      ctx.fillText('No wine data to visualize', 50, 200);
-      return;
-    }
+  // Padding
+  const padding = 50;
 
-    // Canvas dimensions
-    const canvasWidth = canvas.width;
-    const canvasHeight = canvas.height;
+  // Find min and max similarity scores
+  const scores = response.data.map((wine) => wine.similarity);
+  const minScore = Math.min(...scores);
+  const maxScore = Math.max(...scores);
+  const scoreRange = maxScore - minScore || 1; // Handle edge case where all scores are identical
 
-    // Padding
-    const padding = 50;
+  // Add 10% buffer to min and max scores
+  const adjustedMin = minScore - 0.1 * scoreRange;
+  const adjustedMax = maxScore + 0.1 * scoreRange;
+  const adjustedRange = adjustedMax - adjustedMin;
 
-    // Find min and max similarity scores
-    const scores = response.data.map((wine) => wine.similarity);
-    const minScore = Math.min(...scores);
-    const maxScore = Math.max(...scores);
-    const scoreRange = maxScore - minScore || 1; // Handle edge case where all scores are identical
+  // Calculate Y positions for wines based on similarity
+  const yScale = (similarity) =>
+    svgHeight - padding - ((similarity - adjustedMin) / adjustedRange) * (svgHeight - 2 * padding);
 
-    // Add 10% buffer to min and max scores
-    const adjustedMin = minScore - 0.1 * scoreRange;
-    const adjustedMax = maxScore + 0.1 * scoreRange;
-    const adjustedRange = adjustedMax - adjustedMin;
+  // Calculate Y positions for highest and lowest scores
+  const highestY = yScale(maxScore);
+  const lowestY = yScale(minScore);
 
-    // Calculate Y values for highest and lowest scores
-    const highestY =
-      canvasHeight -
-      padding -
-      ((maxScore - adjustedMin) / adjustedRange) * (canvasHeight - 2 * padding);
-    const lowestY =
-      canvasHeight -
-      padding -
-      ((minScore - adjustedMin) / adjustedRange) * (canvasHeight - 2 * padding);
+  console.log('Highest Similarity:', maxScore, 'Y Position:', highestY);
+  console.log('Lowest Similarity:', minScore, 'Y Position:', lowestY);
 
-    // Log the highest and lowest scores and their Y positions
-    console.log('Highest Similarity:', maxScore, 'Y Position:', highestY);
-    console.log('Lowest Similarity:', minScore, 'Y Position:', lowestY);
+  // Randomize X positions to space out wines
+  const xPositions = response.data.map(
+    () => padding + Math.random() * (svgWidth - 2 * padding)
+  );
 
-    // Draw X and Y axes
-    ctx.beginPath();
-    ctx.moveTo(padding, padding); // Y-axis
-    ctx.lineTo(padding, canvasHeight - padding);
-    ctx.moveTo(padding, canvasHeight - padding); // X-axis
-    ctx.lineTo(canvasWidth - padding, canvasHeight - padding);
-    ctx.strokeStyle = '#000';
-    ctx.stroke();
+  return (
+    <svg width={svgWidth} height={svgHeight} style={{ border: '1px solid #ccc' }}>
+      {/* X and Y axes */}
+      <line
+        x1={padding}
+        y1={padding}
+        x2={padding}
+        y2={svgHeight - padding}
+        stroke="black"
+      />
+      <line
+        x1={padding}
+        y1={svgHeight - padding}
+        x2={svgWidth - padding}
+        y2={svgHeight - padding}
+        stroke="black"
+      />
 
-    // Axis labels
-    ctx.font = '14px Arial';
-    ctx.fillStyle = '#000';
-    ctx.fillText('X axis means nothing', canvasWidth / 2 - 60, canvasHeight - 20);
+      {/* Axis labels */}
+      <text x={svgWidth / 2} y={svgHeight - 10} textAnchor="middle" fontSize="14">
+        X axis means nothing
+      </text>
 
-    // Draw markers for highest and lowest scores on the Y-axis
-    ctx.fillStyle = 'green';
-    ctx.fillText(`Highest: ${maxScore.toFixed(2)}`, padding - 45, highestY + 5); // Marker for highest
-    ctx.fillStyle = 'red';
-    ctx.fillText(`Lowest: ${minScore.toFixed(2)}`, padding - 45, lowestY + 5); // Marker for lowest
+      {/* Highest and lowest markers */}
+      <text x={padding - 45} y={highestY + 5} fill="green" fontSize="14">
+        Highest: {maxScore.toFixed(2)}
+      </text>
+      <text x={padding - 45} y={lowestY + 5} fill="red" fontSize="14">
+        Lowest: {minScore.toFixed(2)}
+      </text>
 
-    // Plot each wine on the canvas
-    response.data.forEach((wine) => {
-      const { wine_name, similarity } = wine;
+      {/* Wine points and labels */}
+      {response.data.map((wine, index) => {
+        const x = xPositions[index];
+        const y = yScale(wine.similarity);
 
-      // Normalize similarity score to canvas Y-coordinate
-      const x = padding + Math.random() * (canvasWidth - 2 * padding); // Random X for spacing
-      const y =
-        canvasHeight -
-        padding -
-        ((similarity - adjustedMin) / adjustedRange) * (canvasHeight - 2 * padding); // Normalize
-
-      // Draw the wine as a circle
-      ctx.beginPath();
-      ctx.arc(x, y, 5, 0, 2 * Math.PI); // Circle size = 5
-      ctx.fillStyle = '#007BFF';
-      ctx.fill();
-
-      // Label the wine
-      ctx.font = '12px Arial';
-      ctx.fillStyle = '#333';
-      ctx.fillText(wine_name + " " + similarity.toFixed(2), x + 10, y + 5); // Label beside the circle
-    });
-  }, [response]);
-
-  return <canvas ref={canvasRef} width={800} height={600} style={{ border: '1px solid #ccc' }}></canvas>;
+        return (
+          <g key={wine.wine_id}>
+            {/* Circle for wine point */}
+            <circle cx={x} cy={y} r={5} fill="#007BFF" />
+            {/* Label for wine */}
+            <text x={x + 10} y={y + 5} fontSize="12" fill="#333">
+              {wine.wine_name} {wine.similarity.toFixed(2)}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
 };
 
 export default WineViz;
