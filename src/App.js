@@ -6,6 +6,7 @@ import WineList from './components/WineList';
 import { useFetchWineData } from './useFetchWineData';
 import WineViz from './components/WineViz';
 
+
 function App() {
   const { data, loading, error } = useFetchWineData('http://localhost:5000/unique-wines');
   const [selections, setSelections] = useState({});
