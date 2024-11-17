@@ -21,7 +21,7 @@ const wineSlice = createSlice({
         state.response.data = []; // Ensure `data` is an array
       }
       state.response.data.push(action.payload); // Add the wine to `data`
-    }  
+    }
   }
 });
 

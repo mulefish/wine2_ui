@@ -49,7 +49,7 @@ function App() {
       }
 
       const responseData = await response.json();
-      console.log( "responseData got " + responseData['data'].length)
+      console.log("responseData got " + responseData['data'].length)
       // console.log( JSON.stringify( responseData, null, 2 ) )
       dispatch(setResponse(responseData));
       dispatch(setStatus('succeeded'));
@@ -67,23 +67,48 @@ function App() {
   };
 
   const logReduxStore = () => {
-    // console.log("Redux Store State:", store.getState());
     const x = store.getState();
-    const status=x['wine']['status'] 
-    console.log("redux status=" + status )
 
-    console.log("wine count=" + x['wine']['response']['data'].length ) 
-    console.log(  x['wine']['response']['data'][0] )
- 
+
+    try {
+      const wineData = x?.wine; // Use optional chaining to prevent errors if 'wine' doesn't exist
+      if (!wineData) {
+          console.error("Error: 'wine' object is undefined or null.");
+          return;
+      }
+  
+      const status = wineData.status;
+      if (typeof status !== "string") {
+          console.error("Error: 'status' is not a valid string.");
+      } else {
+          console.log("redux status=" + status);
+      }
+  
+      const responseData = wineData.response?.data;
+      if (!Array.isArray(responseData)) {
+          console.error("Error: 'data' is not a valid array.");
+      } else {
+          console.log("wine count=" + responseData.length);
+  
+          if (responseData.length > 0) {
+              console.log(responseData[0]);
+          } else {
+              console.warn("Warning: 'data' array is empty.");
+          }
+      }
+  } catch (error) {
+      console.error("An unexpected error occurred:", error);
+  }
+  
 
 
   };
 
-  const insertTestWine = () => { 
-    const testWine = {similarity: 1.0, wine_id: 1000, wine_name: 'TEST'}    
+  const insertTestWine = () => {
+    const testWine = { similarity: 1.0, wine_id: 1000, wine_name: 'TEST' }
     const x = store.getState();
-    console.log("count count=" + x['wine']['response']['data'].length ) 
-    console.log( testWine  )
+    console.log("count count=" + x['wine']['response']['data'].length)
+    console.log(testWine)
     dispatch(addWine(testWine));
   }
 
@@ -163,7 +188,7 @@ function App() {
             Log Redux Store
           </button>
 
-          
+
           <button
             style={{
               marginTop: '20px',
@@ -174,7 +199,7 @@ function App() {
             }}
             onClick={insertTestWine}
           >
-          insertTestWine
+            insertTestWine
           </button>
 
 
