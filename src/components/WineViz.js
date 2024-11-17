@@ -34,8 +34,6 @@ const WineViz = () => {
   const highestY = yScale(maxScore);
   const lowestY = yScale(minScore);
 
-  console.log('Highest Similarity:', maxScore, 'Y Position:', highestY);
-  console.log('Lowest Similarity:', minScore, 'Y Position:', lowestY);
 
   // Randomize X positions to space out wines
   const xPositions = response.data.map(

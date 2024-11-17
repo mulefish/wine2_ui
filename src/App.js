@@ -31,7 +31,6 @@ function App() {
       number: numberSelection,
     };
 
-    console.log('Payload:\n' + JSON.stringify(payload, null, 2));
 
     dispatch(setStatus('loading'));
     try {
@@ -50,8 +49,8 @@ function App() {
       }
 
       const responseData = await response.json();
-      console.log('Response from server:\n' + JSON.stringify(responseData, null, 2));
-
+      console.log( "responseData got " + responseData['data'].length)
+      // console.log( JSON.stringify( responseData, null, 2 ) )
       dispatch(setResponse(responseData));
       dispatch(setStatus('succeeded'));
     } catch (error) {
@@ -68,8 +67,25 @@ function App() {
   };
 
   const logReduxStore = () => {
-    console.log("Redux Store State:", store.getState());
+    // console.log("Redux Store State:", store.getState());
+    const x = store.getState();
+    const status=x['wine']['status'] 
+    console.log("redux status=" + status )
+
+    console.log("wine count=" + x['wine']['response']['data'].length ) 
+    console.log(  x['wine']['response']['data'][0] )
+ 
+
+
   };
+
+  const insertTestWine = () => { 
+    const testWine = {similarity: 1.0, wine_id: 1000, wine_name: 'TEST'}    
+    const x = store.getState();
+    console.log("count count=" + x['wine']['response']['data'].length ) 
+    console.log( testWine  )
+  }
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -145,6 +161,22 @@ function App() {
           >
             Log Redux Store
           </button>
+
+          
+          <button
+            style={{
+              marginTop: '20px',
+              marginRight: '10px',
+              padding: '10px 20px',
+              fontSize: '16px',
+              cursor: 'pointer',
+            }}
+            onClick={insertTestWine}
+          >
+          insertTestWine
+          </button>
+
+
         </div>
 
         {/* Wine Visualization */}
