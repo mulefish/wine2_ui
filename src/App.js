@@ -5,6 +5,7 @@ import Selector from './components/Selector';
 import WineList from './components/WineList';
 import { useFetchWineData } from './useFetchWineData';
 import WineViz from './components/WineViz';
+import SlowEndpointTest from './components/SlowEndpointTest'; 
 
 
 function App() {
@@ -209,6 +210,8 @@ function App() {
         {/* Wine Visualization */}
         <div style={{ flex: '2' }}>
           <WineViz />
+          <br/>
+          <SlowEndpointTest/>
         </div>
       </div>
 
