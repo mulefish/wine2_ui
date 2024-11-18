@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector, useStore } from 'react-redux';
+import { useDispatch, useStore } from 'react-redux';
 import { addWine, setResponse, setStatus } from './store/wineSlice';
 import Selector from './components/Selector';
 import WineList from './components/WineList';
